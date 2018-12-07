@@ -1,0 +1,13 @@
+rootProject.name = 'game-programming'
+
+fileTree('.') {
+    include '**/build.gradle'
+    exclude 'buildSrc/build.gradle' // Exclude the buildSrc build file.
+    exclude 'build.gradle' // Exclude the root build file.
+}
+.collect {
+    relativePath(it.parent).replace(File.separator, ':')
+}
+.each {
+    include(it)
+}

@@ -5,18 +5,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.loic.game.programming.api.GameMoveGenerator;
-import com.loic.game.programming.api.HeuristicEvaluator;
 
-public class TestGameLogics implements GameMoveGenerator<TestBoard, TestMove>, HeuristicEvaluator<TestBoard> {
+public class TestMoveGenerator implements GameMoveGenerator<TestBoard, TestMove> {
   @Override
   public List<TestMove> generate(TestBoard board) {
     return IntStream.range(0, board.node.children.size())
       .mapToObj(TestMove::new)
       .collect(Collectors.toList());
-  }
-
-  @Override
-  public double evaluate(TestBoard board) {
-    return board.node.value;
   }
 }

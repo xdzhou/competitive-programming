@@ -10,10 +10,10 @@ public class SmartChoiceUtils {
   }
 
   public static <I> I randomChoice(List<I> list, Function<I, Double> valueFun, Random random) {
-    if(list.isEmpty()) {
+    if (list.isEmpty()) {
       throw new IllegalArgumentException("Nothing to choose");
     }
     I best = null;
-    return  best;
+    return best;
   }
 }

@@ -3,33 +3,37 @@ package com.loic.game.programming.algo.minimax;
 import java.util.List;
 import java.util.Objects;
 
-import com.loic.game.programming.algo.common.GameLogic;
 import com.loic.game.programming.algo.observer.GameDisableObserver;
 import com.loic.game.programming.algo.observer.GameObserver;
 import com.loic.game.programming.api.GameBoard;
 import com.loic.game.programming.api.GameMove;
+import com.loic.game.programming.api.GameMoveGenerator;
 
 public class MiniMax<B extends GameBoard, M extends GameMove<B>> {
+  private final GameMoveGenerator<B, M> moveGenerator;
   private GameObserver<B, M> observer = GameDisableObserver.INSTANCE;
-  private final GameLogic<B, M> gameLogic;
 
-  public MiniMax(GameLogic<B, M> gameLogic) {
-    this.gameLogic = Objects.requireNonNull(gameLogic);
+  public MiniMax(GameMoveGenerator<B, M> moveGenerator) {
+    this.moveGenerator = moveGenerator;
   }
 
   public M bestMove(B board, int depth) {
+    if (board.evaluate(0).length != 2) {
+      throw new IllegalStateException("MiniMax algo can only apply to two players game");
+    }
     EvaluatedMove bestMove = null;
     for (int i = 1; i <= depth; i++) {
-      bestMove = alphaBeta(board, i, Double.NEGATIVE_INFINITY, Double.MAX_VALUE, true);
+      bestMove = alphaBeta(board, i, i, Double.NEGATIVE_INFINITY, Double.MAX_VALUE, true);
       observer.currentBestMove(bestMove.move);
     }
     return bestMove.move;
   }
 
-  private EvaluatedMove alphaBeta(B board, int depth, double alpha, double beta, boolean maxPlayer) {
+  private EvaluatedMove alphaBeta(B board, int remainDepth, int maxDepth, double alpha, double beta, boolean maxPlayer) {
     List<M> moves;
-    if (depth == 0 || (moves = gameLogic.moveGenerator().generate(board)).isEmpty()) {
-      return new EvaluatedMove(null, gameLogic.heuristicEvaluator().evaluate(board));
+    if (remainDepth == 0 || (moves = moveGenerator.generate(board)).isEmpty()) {
+      double[] values = board.evaluate(maxDepth - remainDepth);
+      return new EvaluatedMove(null, values[0] - values[1]);
     }
 
     if (maxPlayer) {
@@ -38,7 +42,7 @@ public class MiniMax<B extends GameBoard, M extends GameMove<B>> {
       for (M move : moves) {
         B newBoard = move.apply(board);
         observer.onMoveApplied(board, move, newBoard);
-        EvaluatedMove childMove = alphaBeta(newBoard, depth - 1, alpha, beta, false);
+        EvaluatedMove childMove = alphaBeta(newBoard, remainDepth - 1, maxDepth, alpha, beta, false);
         if (childMove.value > best) {
           best = childMove.value;
           bestMove = move;
@@ -55,7 +59,7 @@ public class MiniMax<B extends GameBoard, M extends GameMove<B>> {
       for (M move : moves) {
         B newBoard = move.apply(board);
         observer.onMoveApplied(board, move, newBoard);
-        EvaluatedMove childMove = alphaBeta(newBoard, depth - 1, alpha, beta, true);
+        EvaluatedMove childMove = alphaBeta(newBoard, remainDepth - 1, maxDepth, alpha, beta, true);
         if (childMove.value < best) {
           best = childMove.value;
           bestMove = move;

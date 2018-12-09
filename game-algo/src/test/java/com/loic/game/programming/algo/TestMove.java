@@ -15,12 +15,14 @@ public class TestMove implements GameMove<TestBoard> {
 
   @Override
   public TestBoard apply(TestBoard board) {
-    return new TestBoard(board.node.children.get(index));
+    int playerCount = board.node.values.length;
+    return new TestBoard((board.playerId + 1) % playerCount, board.node.children.get(index));
   }
 
   @Override
   public TestBoard cancel(TestBoard board) {
-    throw new UnsupportedOperationException("Not supported");
+    //may have bug
+    return board;
   }
 
   @Override

@@ -10,8 +10,6 @@ subprojects {
     apply plugin: 'pmd'
     apply plugin: 'jacoco'
 
-    task hello << { task -> println "I'm $task.project.name" }
-
     pmd {
         sourceSets = [sourceSets.main]
         reportsDir = file("$project.buildDir/reports/pmd")

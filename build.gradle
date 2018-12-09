@@ -47,16 +47,22 @@ subprojects {
     repositories {
         mavenCentral()
     }
-    
+
     jacocoTestReport {
         reports {
             xml.enabled true
             html.enabled false
         }
     }
-    
+
 
     dependencies {
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.1'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.1'
         testCompile 'org.mockito:mockito-core:2.7.22'
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }

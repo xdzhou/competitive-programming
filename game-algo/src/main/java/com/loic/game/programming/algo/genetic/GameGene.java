@@ -1,8 +1,8 @@
 package com.loic.game.programming.algo.genetic;
 
-import com.loic.game.programming.api.GameMove;
-
 import java.util.Arrays;
+
+import com.loic.game.programming.api.GameMove;
 
 public class GameGene<M extends GameMove> {
   private final M[] moves;
@@ -21,10 +21,12 @@ public class GameGene<M extends GameMove> {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o)
+    if (this == o) {
       return true;
-    if (o == null || getClass() != o.getClass())
+    }
+    if (o == null || getClass() != o.getClass()) {
       return false;
+    }
     GameGene<?> gene = (GameGene<?>) o;
     return Arrays.equals(moves, gene.moves);
   }

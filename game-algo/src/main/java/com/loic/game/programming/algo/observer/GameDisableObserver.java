@@ -10,4 +10,9 @@ public enum GameDisableObserver implements GameObserver {
   public void onMoveApplied(GameBoard oldBoard, GameMove move, GameBoard newBoard) {
     //nothing to do
   }
+
+  @Override
+  public void currentBestMove(GameMove bestMove) {
+    //nothing to do
+  }
 }

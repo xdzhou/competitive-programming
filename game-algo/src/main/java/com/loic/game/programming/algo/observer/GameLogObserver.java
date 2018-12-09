@@ -15,4 +15,9 @@ public class GameLogObserver<B extends GameBoard, M extends GameMove<B>> impleme
     System.out.println("");
     delegate.onMoveApplied(oldBoard, move, newBoard);
   }
+
+  @Override
+  public void currentBestMove(M bestMove) {
+
+  }
 }

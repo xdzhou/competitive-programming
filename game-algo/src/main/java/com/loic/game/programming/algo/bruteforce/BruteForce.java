@@ -1,19 +1,18 @@
 package com.loic.game.programming.algo.bruteforce;
 
-import java.util.List;
-import java.util.Objects;
-
 import com.loic.game.programming.algo.observer.GameDisableObserver;
 import com.loic.game.programming.algo.observer.GameObserver;
 import com.loic.game.programming.api.GameBoard;
-import com.loic.game.programming.api.GameMove;
-import com.loic.game.programming.api.GameMoveGenerator;
+import com.loic.game.programming.api.MoveGenerator;
 
-public class BruteForce<B extends GameBoard, M extends GameMove<B>> {
-  private final GameMoveGenerator<B, M> moveGenerator;
+import java.util.Objects;
+import java.util.Set;
+
+public class BruteForce<B extends GameBoard<M>, M> {
+  private final MoveGenerator<B, M> moveGenerator;
   private GameObserver<B, M> observer = GameDisableObserver.INSTANCE;
 
-  public BruteForce(GameMoveGenerator<B, M> moveGenerator) {
+  public BruteForce(MoveGenerator<B, M> moveGenerator) {
     this.moveGenerator = moveGenerator;
   }
 
@@ -27,22 +26,22 @@ public class BruteForce<B extends GameBoard, M extends GameMove<B>> {
   }
 
   private EvaluatedMove bestEvaluatedMove(B board, int remainDepth, int maxDepth) {
-    List<M> moves;
+    Set<M> moves;
     if (remainDepth == 0 || (moves = moveGenerator.generate(board)).isEmpty()) {
       return new EvaluatedMove(null, board.evaluate(maxDepth - remainDepth));
     }
     M best = null;
     double[] bestValues = null;
     for (M move : moves) {
-      B newBoard = move.apply(board);
-      observer.onMoveApplied(board, move, newBoard);
+      board.applyMove(move);
+      observer.onMoveApplied(move, board);
 
-      EvaluatedMove child = bestEvaluatedMove(newBoard, remainDepth - 1, maxDepth);
-      if (best == null || bestValues[newBoard.currentPlayer()] < child.values[newBoard.currentPlayer()]) {
+      EvaluatedMove child = bestEvaluatedMove(board, remainDepth - 1, maxDepth);
+      if (best == null || bestValues[board.currentPlayer()] < child.values[board.currentPlayer()]) {
         best = move;
         bestValues = child.values;
       }
-      move.cancel(board);
+      board.cancelMove(move);
     }
     return new EvaluatedMove(best, bestValues);
   }

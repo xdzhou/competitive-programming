@@ -7,13 +7,13 @@ import com.loic.game.programming.algo.observer.GameDisableObserver;
 import com.loic.game.programming.algo.observer.GameObserver;
 import com.loic.game.programming.api.GameBoard;
 import com.loic.game.programming.api.GameMove;
-import com.loic.game.programming.api.GameMoveGenerator;
+import com.loic.game.programming.api.MoveGenerator;
 
 public class GameGenetic<B extends GameBoard, M extends GameMove<B>> {
-  private final GameMoveGenerator<B, M> moveGenerator;
+  private final MoveGenerator<B, M> moveGenerator;
   private GameObserver<B, M> observer = GameDisableObserver.INSTANCE;
 
-  public GameGenetic(GameMoveGenerator<B, M> moveGenerator) {
+  public GameGenetic(MoveGenerator<B, M> moveGenerator) {
     this.moveGenerator = moveGenerator;
   }
 
@@ -44,10 +44,10 @@ public class GameGenetic<B extends GameBoard, M extends GameMove<B>> {
 
   private static final class GameResolver<B extends GameBoard, M extends GameMove<B>> implements CandidateResolver<GameGene<M>> {
     private final B rootBoard;
-    private final GameMoveGenerator<B, M> moveGenerator;
+    private final MoveGenerator<B, M> moveGenerator;
     private final int depth;
 
-    private GameResolver(B rootBoard, GameMoveGenerator<B, M> moveGenerator, int depth) {
+    private GameResolver(B rootBoard, MoveGenerator<B, M> moveGenerator, int depth) {
       this.rootBoard = rootBoard;
       this.moveGenerator = moveGenerator;
       this.depth = depth;

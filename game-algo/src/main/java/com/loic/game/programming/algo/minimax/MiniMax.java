@@ -7,13 +7,13 @@ import com.loic.game.programming.algo.observer.GameDisableObserver;
 import com.loic.game.programming.algo.observer.GameObserver;
 import com.loic.game.programming.api.GameBoard;
 import com.loic.game.programming.api.GameMove;
-import com.loic.game.programming.api.GameMoveGenerator;
+import com.loic.game.programming.api.MoveGenerator;
 
 public class MiniMax<B extends GameBoard, M extends GameMove<B>> {
-  private final GameMoveGenerator<B, M> moveGenerator;
+  private final MoveGenerator<B, M> moveGenerator;
   private GameObserver<B, M> observer = GameDisableObserver.INSTANCE;
 
-  public MiniMax(GameMoveGenerator<B, M> moveGenerator) {
+  public MiniMax(MoveGenerator<B, M> moveGenerator) {
     this.moveGenerator = moveGenerator;
   }
 

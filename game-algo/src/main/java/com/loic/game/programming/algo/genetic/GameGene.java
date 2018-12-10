@@ -2,12 +2,10 @@ package com.loic.game.programming.algo.genetic;
 
 import java.util.Arrays;
 
-import com.loic.game.programming.api.GameMove;
-
-public class GameGene<M extends GameMove> {
+public class GameGene<M> {
   private final M[] moves;
 
-  public GameGene(M[] moves) {
+  GameGene(M[] moves) {
     this.moves = moves;
   }
 

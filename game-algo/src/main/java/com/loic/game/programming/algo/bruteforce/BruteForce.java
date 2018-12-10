@@ -1,56 +1,44 @@
 package com.loic.game.programming.algo.bruteforce;
 
-import com.loic.game.programming.algo.observer.GameDisableObserver;
-import com.loic.game.programming.algo.observer.GameObserver;
-import com.loic.game.programming.api.GameBoard;
-import com.loic.game.programming.api.MoveGenerator;
-
-import java.util.Objects;
 import java.util.Set;
 
-public class BruteForce<B extends GameBoard<M>, M> {
-  private final MoveGenerator<B, M> moveGenerator;
-  private GameObserver<B, M> observer = GameDisableObserver.INSTANCE;
+import com.loic.game.programming.api.BestMoveResolver;
+import com.loic.game.programming.api.GameBoard;
+import com.loic.game.programming.api.MoveGenerator;
+import com.loic.game.programming.api.Transformer;
 
-  public BruteForce(MoveGenerator<B, M> moveGenerator) {
-    this.moveGenerator = moveGenerator;
-  }
+public class BruteForce implements BestMoveResolver {
 
-  public M bestMove(B rootBoard, int depth) {
-    EvaluatedMove bestMove = null;
-    for (int i = 1; i <= depth; i++) {
-      bestMove = bestEvaluatedMove(rootBoard, i, i);
-      observer.currentBestMove(bestMove.move);
+  @Override
+  public <B extends GameBoard, M> M bestMove(B rootBoard, MoveGenerator<B, M> moveGenerator, Transformer<B, M> transformer, int maxDepth) {
+    EvaluatedMove<M> bestMove = null;
+    for (int i = 1; i <= maxDepth; i++) {
+      bestMove = bestEvaluatedMove(rootBoard, moveGenerator, transformer, i, i);
     }
     return bestMove.move;
   }
 
-  private EvaluatedMove bestEvaluatedMove(B board, int remainDepth, int maxDepth) {
+  private <B extends GameBoard, M> EvaluatedMove<M> bestEvaluatedMove(B board, MoveGenerator<B, M> moveGenerator, Transformer<B, M> transformer, int remainDepth, int maxDepth) {
     Set<M> moves;
     if (remainDepth == 0 || (moves = moveGenerator.generate(board)).isEmpty()) {
-      return new EvaluatedMove(null, board.evaluate(maxDepth - remainDepth));
+      return new EvaluatedMove<>(null, board.evaluate(maxDepth - remainDepth));
     }
     M best = null;
     double[] bestValues = null;
     for (M move : moves) {
-      board.applyMove(move);
-      observer.onMoveApplied(move, board);
+      transformer.applyMove(board, move);
 
-      EvaluatedMove child = bestEvaluatedMove(board, remainDepth - 1, maxDepth);
+      EvaluatedMove child = bestEvaluatedMove(board, moveGenerator, transformer, remainDepth - 1, maxDepth);
       if (best == null || bestValues[board.currentPlayer()] < child.values[board.currentPlayer()]) {
         best = move;
         bestValues = child.values;
       }
-      board.cancelMove(move);
+      transformer.cancelMove(board, move);
     }
-    return new EvaluatedMove(best, bestValues);
+    return new EvaluatedMove<>(best, bestValues);
   }
 
-  public void setGameObserver(GameObserver<B, M> observer) {
-    this.observer = Objects.requireNonNull(observer);
-  }
-
-  private class EvaluatedMove {
+  private static class EvaluatedMove<M> {
     private final M move;
     private final double[] values;
 

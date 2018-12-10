@@ -1,48 +1,40 @@
 package com.loic.game.programming.algo.minimax;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 
-import com.loic.game.programming.algo.observer.GameDisableObserver;
-import com.loic.game.programming.algo.observer.GameObserver;
+import com.loic.game.programming.api.BestMoveResolver;
 import com.loic.game.programming.api.GameBoard;
-import com.loic.game.programming.api.GameMove;
 import com.loic.game.programming.api.MoveGenerator;
+import com.loic.game.programming.api.Transformer;
 
-public class MiniMax<B extends GameBoard, M extends GameMove<B>> {
-  private final MoveGenerator<B, M> moveGenerator;
-  private GameObserver<B, M> observer = GameDisableObserver.INSTANCE;
+public class MiniMax implements BestMoveResolver {
 
-  public MiniMax(MoveGenerator<B, M> moveGenerator) {
-    this.moveGenerator = moveGenerator;
-  }
-
-  public M bestMove(B board, int depth) {
-    if (board.evaluate(0).length != 2) {
+  @Override
+  public <B extends GameBoard, M> M bestMove(B rootBoard, MoveGenerator<B, M> moveGenerator, Transformer<B, M> transformer, int maxDepth) {
+    if (rootBoard.evaluate(0).length != 2) {
       throw new IllegalStateException("MiniMax algo can only apply to two players game");
     }
-    EvaluatedMove bestMove = null;
-    for (int i = 1; i <= depth; i++) {
-      bestMove = alphaBeta(board, i, i, Double.NEGATIVE_INFINITY, Double.MAX_VALUE, true);
-      observer.currentBestMove(bestMove.move);
+    EvaluatedMove<M> bestMove = null;
+    for (int i = 1; i <= maxDepth; i++) {
+      bestMove = alphaBeta(rootBoard, moveGenerator, transformer, i, i, Double.NEGATIVE_INFINITY, Double.MAX_VALUE);
     }
     return bestMove.move;
   }
 
-  private EvaluatedMove alphaBeta(B board, int remainDepth, int maxDepth, double alpha, double beta, boolean maxPlayer) {
-    List<M> moves;
+  private <B extends GameBoard, M> EvaluatedMove<M> alphaBeta(B board, MoveGenerator<B, M> moveGenerator, Transformer<B, M> transformer, int remainDepth, int maxDepth, double alpha, double beta) {
+    Set<M> moves;
     if (remainDepth == 0 || (moves = moveGenerator.generate(board)).isEmpty()) {
       double[] values = board.evaluate(maxDepth - remainDepth);
-      return new EvaluatedMove(null, values[0] - values[1]);
+      return new EvaluatedMove<>(null, values[0] - values[1]);
     }
 
-    if (maxPlayer) {
+    if (board.currentPlayer() == 0) {
       double best = Double.NEGATIVE_INFINITY;
       M bestMove = null;
       for (M move : moves) {
-        B newBoard = move.apply(board);
-        observer.onMoveApplied(board, move, newBoard);
-        EvaluatedMove childMove = alphaBeta(newBoard, remainDepth - 1, maxDepth, alpha, beta, false);
+        transformer.applyMove(board, move);
+        EvaluatedMove childMove = alphaBeta(board, moveGenerator, transformer, remainDepth - 1, maxDepth, alpha, beta);
+        transformer.cancelMove(board, move);
         if (childMove.value > best) {
           best = childMove.value;
           bestMove = move;
@@ -52,14 +44,14 @@ public class MiniMax<B extends GameBoard, M extends GameMove<B>> {
           break;
         }
       }
-      return new EvaluatedMove(bestMove, best);
+      return new EvaluatedMove<>(bestMove, best);
     } else {
       double best = Double.POSITIVE_INFINITY;
       M bestMove = null;
       for (M move : moves) {
-        B newBoard = move.apply(board);
-        observer.onMoveApplied(board, move, newBoard);
-        EvaluatedMove childMove = alphaBeta(newBoard, remainDepth - 1, maxDepth, alpha, beta, true);
+        transformer.applyMove(board, move);
+        EvaluatedMove childMove = alphaBeta(board, moveGenerator, transformer, remainDepth - 1, maxDepth, alpha, beta);
+        transformer.cancelMove(board, move);
         if (childMove.value < best) {
           best = childMove.value;
           bestMove = move;
@@ -69,15 +61,11 @@ public class MiniMax<B extends GameBoard, M extends GameMove<B>> {
           break;
         }
       }
-      return new EvaluatedMove(bestMove, best);
+      return new EvaluatedMove<>(bestMove, best);
     }
   }
 
-  public void setGameObserver(GameObserver<B, M> observer) {
-    this.observer = Objects.requireNonNull(observer);
-  }
-
-  private class EvaluatedMove {
+  private static class EvaluatedMove<M> {
     private final M move;
     private final double value;
 

@@ -1,30 +1,23 @@
 package com.loic.game.programming.algo.genetic;
 
-import java.util.Objects;
 import java.util.Random;
 
-import com.loic.game.programming.algo.observer.GameDisableObserver;
-import com.loic.game.programming.algo.observer.GameObserver;
+import com.loic.game.programming.api.BestMoveResolver;
 import com.loic.game.programming.api.GameBoard;
-import com.loic.game.programming.api.GameMove;
 import com.loic.game.programming.api.MoveGenerator;
+import com.loic.game.programming.api.Transformer;
 
-public class GameGenetic<B extends GameBoard, M extends GameMove<B>> {
-  private final MoveGenerator<B, M> moveGenerator;
-  private GameObserver<B, M> observer = GameDisableObserver.INSTANCE;
+public class GameGenetic implements BestMoveResolver {
 
-  public GameGenetic(MoveGenerator<B, M> moveGenerator) {
-    this.moveGenerator = moveGenerator;
-  }
-
-  public M bestMove(B rootBoard, int depth) {
-    GeneticAlgo<GameGene<M>> geneticAlgo = new GeneticAlgo<>(new GameResolver<>(rootBoard, moveGenerator, depth),
+  @Override
+  public <B extends GameBoard, M> M bestMove(B rootBoard, MoveGenerator<B, M> moveGenerator, Transformer<B, M> transformer, int maxDepth) {
+    GeneticAlgo<GameGene<M>> geneticAlgo = new GeneticAlgo<>(new GameResolver<>(rootBoard, moveGenerator, maxDepth),
       gene -> {
-        B curBoard = rootBoard;
+        B curBoard = rootBoard.copy();
         int curDepth = 0;
         for (M move : gene.moves()) {
           if (move != null) {
-            curBoard = move.apply(curBoard);
+            transformer.applyMove(curBoard, move);
             curDepth++;
           } else {
             break;
@@ -37,12 +30,7 @@ public class GameGenetic<B extends GameBoard, M extends GameMove<B>> {
     return gene.firstMove();
   }
 
-  public void setGameObserver(GameObserver<B, M> observer) {
-    this.observer = Objects.requireNonNull(observer);
-  }
-
-
-  private static final class GameResolver<B extends GameBoard, M extends GameMove<B>> implements CandidateResolver<GameGene<M>> {
+  private static final class GameResolver<B extends GameBoard, M> implements CandidateResolver<GameGene<M>> {
     private final B rootBoard;
     private final MoveGenerator<B, M> moveGenerator;
     private final int depth;

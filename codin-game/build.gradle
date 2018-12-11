@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':game-api')
+    compile project(':game-algo')
+}

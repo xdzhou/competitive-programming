@@ -63,7 +63,7 @@ public class UTC implements BestMoveResolver {
 
       //back propagate
       while (curNode != null) {
-        curNode.update(converter.convert(curBoard.evaluate(curDepth), curNode.playerJustMoved));
+        curNode.update(converter.convert(curBoard.evaluate(curDepth), curDepth, curNode.playerJustMoved));
         curNode = curNode.parent;
       }
     }

@@ -48,7 +48,7 @@ public class UTC implements BestMoveResolver {
       //expansion
       if (!curNode.untriedMoves.isEmpty()) {
         M nextMove = randomChoice(curNode.untriedMoves);
-        transformer.applyMove(curBoard, curNode.moveApplied);
+        transformer.applyMove(curBoard, nextMove);
         curDepth++;
         curNode = curNode.addChild(nextMove, moveGenerator.generate(curBoard), curBoard.currentPlayer());
       }

@@ -28,7 +28,7 @@ public class MiniMax implements BestMoveResolver {
       return new EvaluatedMove<>(null, values[0] - values[1]);
     }
 
-    if (board.currentPlayer() == 0) {
+    if (board.currentPlayer() == 1) { // next player is maxPlayer (player 0), so current player is 1
       double best = Double.NEGATIVE_INFINITY;
       M bestMove = null;
       for (M move : moves) {

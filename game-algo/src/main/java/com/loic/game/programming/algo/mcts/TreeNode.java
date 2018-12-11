@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-class TreeNode<B extends GameBoard<M>, M> {
+class TreeNode<B extends GameBoard, M> {
 
   final M moveApplied;
   final TreeNode<B, M> parent;
@@ -45,7 +45,7 @@ class TreeNode<B extends GameBoard<M>, M> {
    */
   TreeNode<B, M> addChild(M move, Set<M> untriedMoves, int playerJustMoved) {
     TreeNode<B, M> child = new TreeNode<>(move, this, untriedMoves, playerJustMoved);
-    untriedMoves.remove(move);
+    this.untriedMoves.remove(move);
     children.add(child);
     return child;
   }

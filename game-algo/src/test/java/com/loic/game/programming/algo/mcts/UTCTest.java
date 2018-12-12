@@ -9,9 +9,12 @@ class UTCTest {
 
   @Test
   void testAlgo() {
-    MoveResolverTester.check(new UTC((values, playerId) -> {
+    MoveResolverTester.check(new UTC((values, depth, playerId) -> {
+      if (values.length == 1) {
+        return values[0];
+      }
       double sum = Arrays.stream(values).sum();
       return values[playerId] / sum;
-    }, 100));
+    }, 100), 5);
   }
 }

@@ -10,24 +10,24 @@ public class MoveResolverTester {
     //utils
   }
 
-  public static void check(BestMoveResolver moveResolver) {
+  public static void check(BestMoveResolver moveResolver, int mawDepth) {
     BestMoveResolver resolverWithLog = new BestMoveResolverWithLog(moveResolver, System.out);
-    testSmallNimGame(resolverWithLog);
-    testBigNimGame(resolverWithLog);
+    testSmallNimGame(resolverWithLog, mawDepth);
+    testBigNimGame(resolverWithLog, mawDepth);
   }
 
-  private static void testSmallNimGame(BestMoveResolver moveResolver) {
+  private static void testSmallNimGame(BestMoveResolver moveResolver, int mawDepth) {
     for (int i = 1; i <= 3; i++) {
       NimBoard rootBoard = new NimBoard(i, 1);
-      int move = moveResolver.bestMove(rootBoard, new NimMoveGenerator(), new NimTransformer(), 5);
+      int move = moveResolver.bestMove(rootBoard, new NimMoveGenerator(), new NimTransformer(), mawDepth);
       Assertions.assertEquals(i, move);
     }
   }
 
-  private static void testBigNimGame(BestMoveResolver moveResolver) {
+  private static void testBigNimGame(BestMoveResolver moveResolver, int mawDepth) {
     for (int i = 1; i <= 3; i++) {
       NimBoard rootBoard = new NimBoard(4 * 50 + i, 1);
-      int move = moveResolver.bestMove(rootBoard, new NimMoveGenerator(), new NimTransformer(), 5);
+      int move = moveResolver.bestMove(rootBoard, new NimMoveGenerator(), new NimTransformer(), mawDepth);
       Assertions.assertEquals(i, move);
     }
   }

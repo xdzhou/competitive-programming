@@ -1,11 +1,11 @@
 package com.loic.game.programming.algo.bruteforce;
 
-import java.util.Set;
-
 import com.loic.game.programming.api.BestMoveResolver;
 import com.loic.game.programming.api.GameBoard;
 import com.loic.game.programming.api.MoveGenerator;
 import com.loic.game.programming.api.Transformer;
+
+import java.util.Set;
 
 public class BruteForce implements BestMoveResolver {
 

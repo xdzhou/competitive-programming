@@ -25,6 +25,11 @@ class GameGene<M> {
   }
 
   @Override
+  public int hashCode() {
+    return Arrays.hashCode(moves);
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;
@@ -34,11 +39,6 @@ class GameGene<M> {
     }
     GameGene<?> gene = (GameGene<?>) o;
     return Arrays.equals(moves, gene.moves);
-  }
-
-  @Override
-  public int hashCode() {
-    return Arrays.hashCode(moves);
   }
 
   @Override

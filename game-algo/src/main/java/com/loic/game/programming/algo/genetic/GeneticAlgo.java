@@ -1,11 +1,21 @@
 package com.loic.game.programming.algo.genetic;
 
-import static java.util.Arrays.stream;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static java.util.Arrays.stream;
 
 public class GeneticAlgo<Gene> {
 
@@ -120,8 +130,7 @@ public class GeneticAlgo<Gene> {
       }
       Map<Gene, Double> map = new HashMap<>(genes.size());
 
-      IntStream.range(0, genes.size())
-        .forEach(i -> map.put(genes.get(i), (double) stream(result[i]).sum()));
+      IntStream.range(0, genes.size()).forEach(i -> map.put(genes.get(i), (double) stream(result[i]).sum()));
       return map;
     }
   }

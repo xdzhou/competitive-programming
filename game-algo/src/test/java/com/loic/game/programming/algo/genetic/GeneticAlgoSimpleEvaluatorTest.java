@@ -1,11 +1,11 @@
 package com.loic.game.programming.algo.genetic;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 class GeneticAlgoSimpleEvaluatorTest {
 
@@ -25,10 +25,9 @@ class GeneticAlgoSimpleEvaluatorTest {
     values.add(3d);
 
 
-    evaluator.apply(values)
-      .forEach((k, v) -> {
-        Assertions.assertEquals(k, v);
-        Assertions.assertTrue(values.contains(k));
-      });
+    evaluator.apply(values).forEach((k, v) -> {
+      Assertions.assertEquals(k, v);
+      Assertions.assertTrue(values.contains(k));
+    });
   }
 }

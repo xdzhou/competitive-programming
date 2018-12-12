@@ -1,9 +1,9 @@
 package com.loic.game.programming.algo;
 
+import com.loic.game.programming.api.MoveGenerator;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import com.loic.game.programming.api.MoveGenerator;
 
 public class NimMoveGenerator implements MoveGenerator<NimBoard, Integer> {
 

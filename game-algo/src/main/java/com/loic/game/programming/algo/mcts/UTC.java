@@ -1,16 +1,16 @@
 package com.loic.game.programming.algo.mcts;
 
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-
 import com.loic.game.programming.algo.EvaluationConverter;
 import com.loic.game.programming.api.BestMoveResolver;
 import com.loic.game.programming.api.GameBoard;
 import com.loic.game.programming.api.MoveGenerator;
 import com.loic.game.programming.api.Transformer;
+
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
 
 public class UTC implements BestMoveResolver {
   private static final Random RANDOM = new Random();

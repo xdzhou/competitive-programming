@@ -1,14 +1,14 @@
 package com.loic.game.programming.algo.genetic;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 class GeneticAlgoComparatorEvaluatorTest {
 
@@ -28,12 +28,7 @@ class GeneticAlgoComparatorEvaluatorTest {
     values.add(3d);
 
 
-    List<Double> collect = evaluator.apply(values)
-      .entrySet()
-      .stream()
-      .sorted(Comparator.comparingDouble(Map.Entry::getValue))
-      .map(Map.Entry::getKey)
-      .collect(Collectors.toList());
+    List<Double> collect = evaluator.apply(values).entrySet().stream().sorted(Comparator.comparingDouble(Map.Entry::getValue)).map(Map.Entry::getKey).collect(Collectors.toList());
 
     Collections.sort(values);
     Assertions.assertEquals(values, collect);

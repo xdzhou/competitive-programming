@@ -1,11 +1,11 @@
 package com.loic.game.programming.algo.genetic;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Random;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 class GeneticAlgoTest {
   private static final MockGene EXPECTED = new MockGene(2, 7, 9);
@@ -76,6 +76,11 @@ class GeneticAlgoTest {
     }
 
     @Override
+    public int hashCode() {
+      return Arrays.hashCode(dates);
+    }
+
+    @Override
     public boolean equals(Object o) {
       if (this == o) {
         return true;
@@ -88,15 +93,8 @@ class GeneticAlgoTest {
     }
 
     @Override
-    public int hashCode() {
-      return Arrays.hashCode(dates);
-    }
-
-    @Override
     public String toString() {
-      return "MockGene{" +
-        "dates=" + Arrays.toString(dates) +
-        '}';
+      return "MockGene{" + "dates=" + Arrays.toString(dates) + '}';
     }
   }
 

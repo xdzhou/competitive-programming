@@ -6,6 +6,6 @@ class GameGeneticTest {
 
   @Test
   void testAlgo() {
-    //MoveResolverTester.check(new GameGenetic());
+    //MoveResolverTester.checkNim(new GameGenetic());
   }
 }

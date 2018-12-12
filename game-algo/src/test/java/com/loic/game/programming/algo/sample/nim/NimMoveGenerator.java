@@ -1,4 +1,4 @@
-package com.loic.game.programming.algo;
+package com.loic.game.programming.algo.sample.nim;
 
 import com.loic.game.programming.api.MoveGenerator;
 

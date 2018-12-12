@@ -7,6 +7,6 @@ class BruteForceTest {
 
   @Test
   void testAlgo() {
-    MoveResolverTester.check(new BruteForce(), 6);
+    MoveResolverTester.checkNim(new BruteForce(), 6);
   }
 }

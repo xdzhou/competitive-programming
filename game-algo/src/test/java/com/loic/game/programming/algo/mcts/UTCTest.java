@@ -9,7 +9,7 @@ class UTCTest {
 
   @Test
   void testAlgo() {
-    MoveResolverTester.check(new UTC((values, depth, playerId) -> {
+    MoveResolverTester.checkNim(new UTC((values, depth, playerId) -> {
       if (values.length == 1) {
         return values[0];
       }

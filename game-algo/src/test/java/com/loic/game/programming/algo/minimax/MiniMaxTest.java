@@ -7,6 +7,6 @@ class MiniMaxTest {
 
   @Test
   void testAlgo() {
-    MoveResolverTester.check(new MiniMax(), 6);
+    MoveResolverTester.checkNim(new MiniMax(), 6);
   }
 }

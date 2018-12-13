@@ -41,11 +41,12 @@ public class NimBoard implements GameBoard {
 
   @Override
   public double[] evaluate(int depth) {
+    //if(remainChips !=0) throw new IllegalStateException("AA");
     double[] values = new double[2];
     int winIndex = (remainChips % 4 == 0) ? playerId : 1 - playerId;
 
-    values[winIndex] = 0.9;
-    values[1 - winIndex] = 0.1;
+    values[winIndex] = 1;
+    values[1 - winIndex] = 0;
     return values;
   }
 

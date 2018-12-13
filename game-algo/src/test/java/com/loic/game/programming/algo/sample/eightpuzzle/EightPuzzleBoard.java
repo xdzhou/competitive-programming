@@ -9,10 +9,13 @@ import java.util.StringJoiner;
  * https://www.cs.princeton.edu/courses/archive/spr10/cos226/assignments/8puzzle.html
  */
 public class EightPuzzleBoard implements GameBoard {
-  final Direction dirApplied;
+  //FIXME
+  Direction parentDirApplied;
+  Direction dirApplied;
   private final int[] board;
 
-  public EightPuzzleBoard(Direction dirApplied, int... board) {
+  public EightPuzzleBoard(Direction parentDirApplied, Direction dirApplied, int... board) {
+    this.parentDirApplied = parentDirApplied;
     this.dirApplied = dirApplied;
     if (board.length != 9) {
       throw new IllegalArgumentException("Board length should be 9");
@@ -34,12 +37,12 @@ public class EightPuzzleBoard implements GameBoard {
         archive++;
       }
     }
-    return new double[]{archive};
+    return new double[]{archive-depth};
   }
 
   @Override
   public EightPuzzleBoard copy() {
-    return new EightPuzzleBoard(dirApplied, Arrays.copyOf(board, board.length));
+    return new EightPuzzleBoard(parentDirApplied, dirApplied, Arrays.copyOf(board, board.length));
   }
 
   int blankSquareIndex() {

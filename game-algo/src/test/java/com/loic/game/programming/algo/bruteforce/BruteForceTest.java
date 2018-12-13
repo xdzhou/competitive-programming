@@ -6,7 +6,12 @@ import org.junit.jupiter.api.Test;
 class BruteForceTest {
 
   @Test
-  void testAlgo() {
+  void testNim() {
     MoveResolverTester.checkNim(new BruteForce(), 6);
+  }
+
+  @Test
+  void testEightPuzzle(){
+    MoveResolverTester.checkEightPuzzle(new BruteForce(), 6);
   }
 }

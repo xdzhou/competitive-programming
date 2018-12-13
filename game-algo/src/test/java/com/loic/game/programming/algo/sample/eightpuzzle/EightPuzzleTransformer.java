@@ -24,6 +24,8 @@ public class EightPuzzleTransformer implements Transformer<EightPuzzleBoard, Dir
         break;
     }
     board.switchSquare(blankIndex, row * 3 + col);
+    board.parentDirApplied = board.dirApplied;
+    board.dirApplied = move;
   }
 
   @Override

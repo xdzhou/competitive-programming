@@ -55,7 +55,7 @@ public class AStar implements BestMoveResolver {
 
   private static class CandidateMetaData<M> {
     private final M move;
-    private double value;
+    private double value = Double.NEGATIVE_INFINITY;
 
     private CandidateMetaData(M move) {
       this.move = move;

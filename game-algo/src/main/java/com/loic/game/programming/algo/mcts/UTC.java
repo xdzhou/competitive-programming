@@ -12,6 +12,9 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
+/**
+ * code convert from python : http://mcts.ai/code/python.html
+ */
 public class UTC implements BestMoveResolver {
   private static final Random RANDOM = new Random();
   private static final double EPSILON = 1e-6;
@@ -30,7 +33,7 @@ public class UTC implements BestMoveResolver {
 
   @Override
   public <B extends GameBoard, M> M bestMove(B rootBoard, MoveGenerator<B, M> moveGenerator, Transformer<B, M> transformer, int maxDepth) {
-    TreeNode<B, M> rootNode = new TreeNode<>(null, null, moveGenerator.generate(rootBoard), 0);
+    TreeNode<B, M> rootNode = new TreeNode<>(null, null, moveGenerator.generate(rootBoard), rootBoard.evaluate(0).length - 1);
 
     for (int i = 0; i < maxIterations; i++) {
       TreeNode<B, M> curNode = rootNode;
@@ -55,15 +58,16 @@ public class UTC implements BestMoveResolver {
 
       //Rollout - this can often be made orders of magnitude quicker using a state.GetRandomMove() function
       Set<M> moves = null;
-      while (curDepth < maxDepth && !(moves = moveGenerator.generate(curBoard)).isEmpty()) {
+      while (true && !(moves = moveGenerator.generate(curBoard)).isEmpty()) {
         M nextMove = randomChoice(moves);
-        transformer.applyMove(curBoard, curNode.moveApplied);
+        transformer.applyMove(curBoard, nextMove);
         curDepth++;
       }
 
       //back propagate
+      double[] values = curBoard.evaluate(curDepth);
       while (curNode != null) {
-        curNode.update(converter.convert(curBoard.evaluate(curDepth), curDepth, curNode.playerJustMoved));
+        curNode.update(converter.convert(values, curDepth, curNode.playerJustMoved));
         curNode = curNode.parent;
       }
     }

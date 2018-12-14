@@ -1,5 +1,6 @@
 package com.loic.game.programming.algo.genetic;
 
+import com.loic.game.programming.algo.timemanagement.TimeoutException;
 import com.loic.game.programming.api.BestMoveResolver;
 import com.loic.game.programming.api.GameBoard;
 import com.loic.game.programming.api.MoveGenerator;
@@ -17,8 +18,12 @@ public class GameGenetic implements BestMoveResolver {
   public <B extends GameBoard, M> M bestMove(B rootBoard, MoveGenerator<B, M> moveGenerator, Transformer<B, M> transformer, int maxDepth) {
     GeneticAlgo<GameGene<M>> geneticAlgo = new GeneticAlgo<>(new GameResolver<>(rootBoard, moveGenerator, transformer, maxDepth), gene -> gene.values()[0]);
 
-    GameGene<M> gene = geneticAlgo.iterate(100, 80);
-    return gene.firstMove();
+    try {
+      GameGene<M> gene = geneticAlgo.iterate(100, 80);
+      return gene.firstMove();
+    } catch (TimeoutException e) {
+      return geneticAlgo.cueentBest().firstMove();
+    }
   }
 
   private static final class GameResolver<B extends GameBoard, M> implements CandidateResolver<GameGene<M>> {

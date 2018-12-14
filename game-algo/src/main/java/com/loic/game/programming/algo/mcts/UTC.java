@@ -1,6 +1,7 @@
 package com.loic.game.programming.algo.mcts;
 
 import com.loic.game.programming.algo.EvaluationConverter;
+import com.loic.game.programming.algo.timemanagement.TimeoutException;
 import com.loic.game.programming.api.BestMoveResolver;
 import com.loic.game.programming.api.GameBoard;
 import com.loic.game.programming.api.MoveGenerator;
@@ -35,45 +36,54 @@ public class UTC implements BestMoveResolver {
   public <B extends GameBoard, M> M bestMove(B rootBoard, MoveGenerator<B, M> moveGenerator, Transformer<B, M> transformer, int maxDepth) {
     TreeNode<B, M> rootNode = new TreeNode<>(null, null, moveGenerator.generate(rootBoard), rootBoard.evaluate(0).length - 1);
 
-    for (int i = 0; i < maxIterations; i++) {
-      TreeNode<B, M> curNode = rootNode;
-      B curBoard = rootBoard.copy();
-      int curDepth = 0;
-
-      //selection
-      while (curNode.untriedMoves.isEmpty() && !curNode.children.isEmpty()) {
-        //node is fully expanded and non-terminal
-        curNode = UCTSelectChild(curNode);
-        transformer.applyMove(curBoard, curNode.moveApplied);
-        curDepth++;
+    try {
+      for (int i = 0; i < maxIterations; i++) {
+        processLoop(rootNode, rootBoard, moveGenerator, transformer, maxDepth);
       }
-
-      //expansion
-      if (!curNode.untriedMoves.isEmpty()) {
-        M nextMove = randomChoice(curNode.untriedMoves);
-        transformer.applyMove(curBoard, nextMove);
-        curDepth++;
-        curNode = curNode.addChild(nextMove, moveGenerator.generate(curBoard), curBoard.currentPlayer());
-      }
-
-      //Rollout - this can often be made orders of magnitude quicker using a state.GetRandomMove() function
-      Set<M> moves = null;
-      while (true && !(moves = moveGenerator.generate(curBoard)).isEmpty()) {
-        M nextMove = randomChoice(moves);
-        transformer.applyMove(curBoard, nextMove);
-        curDepth++;
-      }
-
-      //back propagate
-      double[] values = curBoard.evaluate(curDepth);
-      while (curNode != null) {
-        curNode.update(converter.convert(values, curDepth, curNode.playerJustMoved));
-        curNode = curNode.parent;
-      }
+    } catch (TimeoutException e) {
+      // nothing to worry, just time out
+      // return current best move
     }
 
     Optional<M> bestMove = rootNode.children.stream().max(Comparator.comparingInt(TreeNode::visitCount)).map(node -> node.moveApplied);
     return bestMove.orElse(null);
+  }
+
+  private <B extends GameBoard, M> void processLoop(TreeNode<B, M> rootNode, B rootBoard, MoveGenerator<B, M> moveGenerator, Transformer<B, M> transformer, int maxDepth) {
+    TreeNode<B, M> curNode = rootNode;
+    B curBoard = rootBoard.copy();
+    int curDepth = 0;
+
+    //selection
+    while (curNode.untriedMoves.isEmpty() && !curNode.children.isEmpty()) {
+      //node is fully expanded and non-terminal
+      curNode = UCTSelectChild(curNode);
+      transformer.applyMove(curBoard, curNode.moveApplied);
+      curDepth++;
+    }
+
+    //expansion
+    if (!curNode.untriedMoves.isEmpty()) {
+      M nextMove = randomChoice(curNode.untriedMoves);
+      transformer.applyMove(curBoard, nextMove);
+      curDepth++;
+      curNode = curNode.addChild(nextMove, moveGenerator.generate(curBoard), curBoard.currentPlayer());
+    }
+
+    //Rollout - this can often be made orders of magnitude quicker using a state.GetRandomMove() function
+    Set<M> moves;
+    while (curDepth < maxDepth && !(moves = moveGenerator.generate(curBoard)).isEmpty()) {
+      M nextMove = randomChoice(moves);
+      transformer.applyMove(curBoard, nextMove);
+      curDepth++;
+    }
+
+    //back propagate
+    double[] values = curBoard.evaluate(curDepth);
+    while (curNode != null) {
+      curNode.update(converter.convert(values, curDepth, curNode.playerJustMoved));
+      curNode = curNode.parent;
+    }
   }
 
   /**

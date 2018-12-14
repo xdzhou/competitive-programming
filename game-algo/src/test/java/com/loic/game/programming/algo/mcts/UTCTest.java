@@ -8,7 +8,7 @@ import java.util.Arrays;
 class UTCTest {
 
   @Test
-  void testAlgo() {
+  void testNim() {
     MoveResolverTester.checkNim(new UTC((values, depth, playerId) -> {
       if (values.length == 1) {
         return values[0];
@@ -16,5 +16,10 @@ class UTCTest {
       double sum = Arrays.stream(values).sum();
       return values[playerId] / sum;
     }, 100), 5);
+  }
+
+  @Test
+  void testEightPuzzle() {
+    MoveResolverTester.checkEightPuzzle(new UTC((values, depth, playerId) -> values[playerId] / 10d, 10), 5);
   }
 }

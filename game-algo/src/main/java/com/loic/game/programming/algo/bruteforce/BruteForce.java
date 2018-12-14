@@ -1,5 +1,6 @@
 package com.loic.game.programming.algo.bruteforce;
 
+import com.loic.game.programming.algo.timemanagement.TimeoutException;
 import com.loic.game.programming.api.BestMoveResolver;
 import com.loic.game.programming.api.GameBoard;
 import com.loic.game.programming.api.MoveGenerator;
@@ -12,9 +13,15 @@ public class BruteForce implements BestMoveResolver {
   @Override
   public <B extends GameBoard, M> M bestMove(B rootBoard, MoveGenerator<B, M> moveGenerator, Transformer<B, M> transformer, int maxDepth) {
     EvaluatedMove<M> bestMove = null;
-    for (int i = 1; i <= maxDepth; i++) {
-      bestMove = bestEvaluatedMove(rootBoard, moveGenerator, transformer, i, i);
+    try {
+      for (int i = 1; i <= maxDepth; i++) {
+        bestMove = bestEvaluatedMove(rootBoard, moveGenerator, transformer, i, i);
+      }
+    } catch (TimeoutException e) {
+      // nothing to worry, just time out
+      // return current best move
     }
+
     return bestMove.move;
   }
 

@@ -45,6 +45,10 @@ public class GeneticAlgo<Gene> {
     return populations.get(0);
   }
 
+  Gene cueentBest() {
+    return populations.size() > 0 ? populations.get(0) : null;
+  }
+
   private void oneIteration(int count, int selectionNumber, int mergedNumber, int mutatedNumber) {
 
     while (populations.size() < count) {

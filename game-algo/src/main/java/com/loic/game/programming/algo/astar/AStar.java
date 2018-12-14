@@ -1,6 +1,7 @@
 package com.loic.game.programming.algo.astar;
 
 import com.loic.game.programming.algo.EvaluationConverter;
+import com.loic.game.programming.algo.timemanagement.TimeoutException;
 import com.loic.game.programming.api.BestMoveResolver;
 import com.loic.game.programming.api.GameBoard;
 import com.loic.game.programming.api.MoveGenerator;
@@ -28,26 +29,32 @@ public class AStar implements BestMoveResolver {
 
     List<CandidateMetaData<M>> candidates = new ArrayList<>();
 
-    while (!priorityQueue.isEmpty()) {
-      AStarNode<B, M> node = priorityQueue.poll();
-      if (node.depth <= maxDepth) {
-        int depth = node.depth + 1;
-        for (M move : moveGenerator.generate(node.board)) {
-          B newBoard = node.board.copy();
-          transformer.applyMove(newBoard, move);
-          CandidateMetaData<M> metaData;
-          if (node.metaData == null) {
-            metaData = new CandidateMetaData<>(move);
-            candidates.add(metaData);
-          } else {
-            metaData = node.metaData;
+    try {
+      while (!priorityQueue.isEmpty()) {
+        AStarNode<B, M> node = priorityQueue.poll();
+        if (node.depth <= maxDepth) {
+          int depth = node.depth + 1;
+          for (M move : moveGenerator.generate(node.board)) {
+            B newBoard = node.board.copy();
+            transformer.applyMove(newBoard, move);
+            CandidateMetaData<M> metaData;
+            if (node.metaData == null) {
+              metaData = new CandidateMetaData<>(move);
+              candidates.add(metaData);
+            } else {
+              metaData = node.metaData;
+            }
+            AStarNode<B, M> newNode = new AStarNode<>(metaData, newBoard, depth, converter.convert(newBoard.evaluate(depth), depth, newBoard.currentPlayer()));
+            priorityQueue.add(newNode);
           }
-          AStarNode<B, M> newNode = new AStarNode<>(metaData, newBoard, depth, converter.convert(newBoard.evaluate(depth), depth, newBoard.currentPlayer()));
-          priorityQueue.add(newNode);
         }
+        node.updateValue();
       }
-      node.updateValue();
+    } catch (TimeoutException e) {
+      // nothing to worry, just time out
+      // return current best move
     }
+
     Optional<CandidateMetaData<M>> best = candidates.stream().max(Comparator.comparingDouble(candidate -> candidate.value));
     return best.map(mCandidateMetaData -> mCandidateMetaData.move).orElse(null);
   }

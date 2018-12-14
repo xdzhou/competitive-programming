@@ -1,5 +1,6 @@
 package com.loic.game.programming.algo.minimax;
 
+import com.loic.game.programming.algo.timemanagement.TimeoutException;
 import com.loic.game.programming.api.BestMoveResolver;
 import com.loic.game.programming.api.GameBoard;
 import com.loic.game.programming.api.MoveGenerator;
@@ -15,10 +16,16 @@ public class MiniMax implements BestMoveResolver {
       throw new IllegalStateException("MiniMax algo can only apply to two players game");
     }
     EvaluatedMove<M> bestMove = null;
-    for (int i = 1; i <= maxDepth; i++) {
-      bestMove = alphaBeta(rootBoard, moveGenerator, transformer, i, i, Double.NEGATIVE_INFINITY, Double.MAX_VALUE);
+    try {
+      for (int i = 1; i <= maxDepth; i++) {
+        bestMove = alphaBeta(rootBoard, moveGenerator, transformer, i, i, Double.NEGATIVE_INFINITY, Double.MAX_VALUE);
+      }
+    } catch (TimeoutException e) {
+      // nothing to worry, just time out
+      // return current best move
     }
-    return bestMove.move;
+
+    return bestMove == null ? null : bestMove.move;
   }
 
   private <B extends GameBoard, M> EvaluatedMove<M> alphaBeta(B board, MoveGenerator<B, M> moveGenerator, Transformer<B, M> transformer, int remainDepth, int maxDepth, double alpha, double beta) {

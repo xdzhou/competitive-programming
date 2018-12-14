@@ -9,14 +9,9 @@ import java.util.StringJoiner;
  * https://www.cs.princeton.edu/courses/archive/spr10/cos226/assignments/8puzzle.html
  */
 public class EightPuzzleBoard implements GameBoard {
-  //FIXME
-  Direction parentDirApplied;
-  Direction dirApplied;
   private final int[] board;
 
-  public EightPuzzleBoard(Direction parentDirApplied, Direction dirApplied, int... board) {
-    this.parentDirApplied = parentDirApplied;
-    this.dirApplied = dirApplied;
+  public EightPuzzleBoard(int... board) {
     if (board.length != 9) {
       throw new IllegalArgumentException("Board length should be 9");
     }
@@ -31,18 +26,28 @@ public class EightPuzzleBoard implements GameBoard {
 
   @Override
   public double[] evaluate(int depth) {
+    int archive = archiveCount();
+    double addition = depth == 0 ? 1.1d : 1 / (double) depth;
+    return new double[]{archive + addition};
+  }
+
+  @Override
+  public EightPuzzleBoard copy() {
+    return new EightPuzzleBoard(Arrays.copyOf(board, board.length));
+  }
+
+  boolean isWin() {
+    return archiveCount() == 8;
+  }
+
+  private int archiveCount() {
     int archive = 0;
     for (int i = 0; i < 8; i++) {
       if (board[i] == i + 1) {
         archive++;
       }
     }
-    return new double[]{archive-depth};
-  }
-
-  @Override
-  public EightPuzzleBoard copy() {
-    return new EightPuzzleBoard(parentDirApplied, dirApplied, Arrays.copyOf(board, board.length));
+    return archive;
   }
 
   int blankSquareIndex() {
@@ -62,6 +67,6 @@ public class EightPuzzleBoard implements GameBoard {
 
   @Override
   public String toString() {
-    return new StringJoiner(", ", EightPuzzleBoard.class.getSimpleName() + "[", "]").add("dirApplied=" + dirApplied).add("board=" + Arrays.toString(board)).toString();
+    return new StringJoiner(", ", EightPuzzleBoard.class.getSimpleName() + "[", "]").add("board=" + Arrays.toString(board)).toString();
   }
 }

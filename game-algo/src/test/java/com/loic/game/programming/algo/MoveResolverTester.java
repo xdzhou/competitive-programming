@@ -50,7 +50,7 @@ public class MoveResolverTester {
    * https://www.cs.princeton.edu/courses/archive/spr10/cos226/assignments/8puzzle.html
    */
   private static void testEightPuzzle(BestMoveResolver moveResolver, int mawDepth) {
-    EightPuzzleBoard board = new EightPuzzleBoard(Direction.NONE, 0, 1, 3, 4, 2, 5, 7, 8, 6);
+    EightPuzzleBoard board = new EightPuzzleBoard(0, 1, 3, 4, 2, 5, 7, 8, 6);
     Direction dir = moveResolver.bestMove(board, new EightPuzzleMoveGenerator(), new EightPuzzleTransformer(), mawDepth);
     Assertions.assertEquals(Direction.RIGHT, dir);
   }

@@ -20,7 +20,7 @@ public class MiniMax implements BestMoveResolver {
       for (int i = 1; i <= maxDepth; i++) {
         bestMove = alphaBeta(rootBoard, moveGenerator, transformer, i, i, Double.NEGATIVE_INFINITY, Double.MAX_VALUE);
       }
-    } catch (TimeoutException e) {
+    } catch (TimeoutException e) { //NOPMD
       // nothing to worry, just time out
       // return current best move
     }

@@ -50,7 +50,7 @@ public class AStar implements BestMoveResolver {
         }
         node.updateValue();
       }
-    } catch (TimeoutException e) {
+    } catch (TimeoutException e) { //NOPMD
       // nothing to worry, just time out
       // return current best move
     }

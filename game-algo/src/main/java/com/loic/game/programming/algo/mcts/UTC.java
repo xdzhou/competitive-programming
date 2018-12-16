@@ -40,7 +40,7 @@ public class UTC implements BestMoveResolver {
       for (int i = 0; i < maxIterations; i++) {
         processLoop(rootNode, rootBoard, moveGenerator, transformer, maxDepth);
       }
-    } catch (TimeoutException e) {
+    } catch (TimeoutException e) { //NOPMD
       // nothing to worry, just time out
       // return current best move
     }

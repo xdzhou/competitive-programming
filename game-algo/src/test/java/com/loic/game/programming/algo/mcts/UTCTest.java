@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 class UTCTest {
 
-  @Test
+
   void testNim() {
     MoveResolverTester.checkNim(new UTC((values, depth, playerId) -> {
       if (values.length == 1) {
